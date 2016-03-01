@@ -7,13 +7,13 @@
 
 	Alias /static/ /homes/jhaas/Databases/projects/quiz/myquiz/static/
 
-	<Directory homes/jhaas/Databases/projects/quiz/myquiz/myquiz/>
+	<Directory /homes/jhaas/Databases/projects/quiz/myquiz/myquiz/>
 		<Files wsgi.py>
 			Require all granted
 		</Files>
 	</Directory>
 
-	<Directory /homes/jhaasDatabases/projects/quiz/myquiz/static/>
+	<Directory /homes/jhaas/Databases/projects/quiz/myquiz/static/>
 		Require all granted
 	</Directory>
 </virtualhost>
