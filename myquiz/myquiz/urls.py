@@ -14,11 +14,9 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
+from quiz import views
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^quiz/(?P<class>\w)/(?P<name>\w)/(?P<number>\d*)/(?P<question>\d*)$', views.quiz)
-    url(r'^articles/(?P<year>[0-9]{4})/$', views.year_archive),
-    url(r'^articles/(?P<year>[0-9]{4})/(?P<month>[0-9]{2})/$', views.month_archive),
-    url(r'^articles/(?P<year>[0-9]{4})/(?P<month>[0-9]{2})/(?P<day>[0-9]{2})/$', 
+    #url(r'^quiz/(?P<class>\w)/(?P<name>\w)/(?P<number>\d*)/(?P<question>\d*)$', views.quiz), 
 ]
