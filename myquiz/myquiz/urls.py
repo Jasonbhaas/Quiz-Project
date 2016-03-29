@@ -18,5 +18,6 @@ from quiz import views
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^', include('quiz.urls')),
     #url(r'^quiz/(?P<class>\w)/(?P<name>\w)/(?P<number>\d*)/(?P<question>\d*)$', views.quiz), 
 ]
