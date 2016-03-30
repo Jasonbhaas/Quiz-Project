@@ -1,0 +1,15 @@
+
+
+<h1> You are making a quiz. Niceeeee Job! </h1>
+
+<form action="quiz_create" method="post">
+{% csrf_token %}
+	<ul>
+		<li><label for="name">Quiz name: </label><input type="text" name = "name" /></li>
+		<li><label for="subject">Subject: </label><input type = "text" name = "subject" /></li>
+		<li><label for="instructions">Instructions: </label><textarea  name = "instructions" cols="50" rows="10" /> </textarea></li>
+		<li><label for="description">Description: </label><textarea  name = "description" cols="50" rows="10" /> </textarea></li>
+	</ul>
+	<input type = "submit" value="Add questions"/>
+</form>
+

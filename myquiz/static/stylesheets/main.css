@@ -1,0 +1,83 @@
+/*navbar*/
+
+/*Colors for reference:
+Accent red: #E63946
+light grey: #DEDDE1
+off white: #F1FAEE
+Light blue: #A8DADC
+Med blue: #457B9D
+Dark blue: #1D3557*/
+
+
+
+#nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #1D3557;
+    color: #CDF7F6;
+}
+
+#nav li {
+    float: right;
+}
+
+#nav a {
+    display: inline-block;
+    color: #eee;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+#nav li a:hover {
+    background-color: #A8DADC;
+    color: #0D2C54;
+}
+
+#nav .active {
+    background-color: #E63946;
+    color: white;
+
+}
+
+/*Main Section*/
+
+body {
+  background-color: #DEDDE1;
+}
+
+.container {
+  margin-left: auto;
+  margin-right: auto;
+  width: 750px;
+  min-height: 500px;
+  background-color: #F1FAEE;
+  border-radius: 5px;
+  border: solid 5px #1D3557;
+  padding: 5px;
+
+}
+
+#main li {
+  list-style-type: none;
+  text-align: center;
+}
+
+#main ul {
+  list-style-type: none;
+}
+
+#main p {
+  text-align: center;
+}
+
+h1 {
+  text-align: center;
+  font-size: 60px;
+}
+h2 {
+  text-align: center;
+}
+
