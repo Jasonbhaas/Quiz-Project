@@ -10,4 +10,5 @@ urlpatterns = [
 	url(r'^quiz/new/$', views.make_quiz, name='make_quiz'),
 	url(r'^quiz/new/quiz_create', views.create_quiz),
 	url(r'^quiz/(?P<quiz_id>[0-9]+)/new/question', views.write_question, name="write_question"),
+	url(r'^sign_up', views.register, name="sign_up"),
 ]

@@ -41,5 +41,12 @@ def write_question(request, quiz_id):
    	except Quiz.DoesNotExist:
         	raise Http404("Quiz does not exist")
 	return render(request, 'quiz/write_question.html', {'quiz': quiz})
+
+def register(request):
+	return render(request, 'quiz/register')
+
+def create_user(request):
+	pass
+
 # Create your views here
 
