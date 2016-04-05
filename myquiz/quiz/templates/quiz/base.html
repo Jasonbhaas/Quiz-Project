@@ -9,11 +9,15 @@
 	<body>
 		<nav id="nav">
 			<ul>
-				<li><a class="active" id="home" href="home.html">Home</a></li>
+				<li><a class="active" id="home" href="/">Home</a></li>
 				<li><a id="review" review href="review.html">Revew Past Quizes</a></li>
 				<li><a id="take" href="quizes.html">Take a Quiz</a></li>
 				<li><a id="make" href ="{% url 'make_quiz' %}">Make a Quiz</a></li>
-				<li><a id="sign_in" href="/sign_in">Sign In</a></li>
+				{% if user.is_authenticated %}
+					<li><a id="sign_out" href="{% url 'log_out' %}">Log Out</a></li>
+				{% else %}
+					<li><a id="sign_in" href="{% url 'log_in' %}">Sign In</a></li>
+				{% endif %}			
 			</ul>
 		</nav>
 		{% block content %} {% endblock %}

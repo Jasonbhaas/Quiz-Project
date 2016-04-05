@@ -2,9 +2,12 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect,  Http404
 from django .template import loader
 from django .shortcuts import render
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.decorators import login_required
+from forms import UserCreateForm, QuizForm
 from models import Quiz
 
-from models import Quiz
 
 def index(request):
 	quizzes = Quiz.objects.all()
@@ -25,15 +28,20 @@ def question(request, question_id):
 	response = "You're looking at the question %s."
 	return HttpResponse(response % question_id)
 
+@login_required
 def make_quiz(request):
-	#add in some authentication here I believe
-	return render(request, 'quiz/make_quiz.html')
-
-def create_quiz(request):
-	quiz = Quiz(name = request.POST['name'],  subject = request.POST['subject'],
-		instructions = request.POST['instructions'], description = request.POST['description'])
-	quiz.save()
-	return HttpResponseRedirect('/')
+	if request.method=="POST":
+		data = request.POST
+		mydata = dict()
+		for key, value in data.iteritems():
+			mydata[key] = value
+		form = QuizForm(mydata)
+		if form.is_valid():
+			form.save(request.user)
+			return HttpResponseRedirect('/')
+	else:
+		form = QuizForm()
+	return render(request, 'quiz/make_quiz.html', context={'form':form})
 
 def write_question(request, quiz_id):
 	try:
@@ -42,11 +50,35 @@ def write_question(request, quiz_id):
         	raise Http404("Quiz does not exist")
 	return render(request, 'quiz/write_question.html', {'quiz': quiz})
 
-def register(request):
-	return render(request, 'quiz/register')
-
 def create_user(request):
-	pass
+	if request.method=="POST":
+		form = UserCreateForm(request.POST)
+		if form.is_valid():
+			form.save()
+			return HttpResponseRedirect('/')
+	else:
+		form = UserCreateForm()
+	return render(request, 'quiz/create_user.html', context={'form':form})
 
-# Create your views here
 
+def log_in(request):
+	if request.method=="POST":
+		username = request.POST['username']
+		password = request.POST['password']
+		user = authenticate(username=username, password=password)
+		if user is not None:
+			if user.is_active:
+				login(request, user)
+				return HttpResponseRedirect('/')
+			else:
+				### account is disabled
+				return HttpResponseRedirect('/account_disabled')
+		else:
+			#invalid logint
+			return HttpResponseRedirect('/invalid_login')
+	else:
+		return render(request, 'quiz/log_in.html')
+
+def log_out(request):
+	logout(request)
+	return HttpResponseRedirect('/')

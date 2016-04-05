@@ -1,0 +1,30 @@
+{% extends "quiz/base.html" %}
+
+{% block content %}
+
+<div id="header">
+	<h1>
+		Log In:
+	</h1>
+</div>
+<div id="main">
+	<div class="container">
+		<form action="log_in" method="POST">
+		{% csrf_token %}
+		<ul>
+				<li><label for="username">Username: </label><input type="text" name = "username" /></li>
+				<li><label for="password">Subject: </label><input type = "password" name = "password" /></li>
+			</ul>
+			<input type = "submit" value="Log In"/>
+		</form>
+	</div>
+<h3>Or Sign Up <a href= {% url 'sign_up' %}>Here</a></h3>
+</div>
+
+
+
+
+
+
+
+{% endblock %}
