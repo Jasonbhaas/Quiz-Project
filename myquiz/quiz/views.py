@@ -5,8 +5,8 @@ from django .shortcuts import render
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
-from forms import UserCreateForm, QuizForm
-from models import Quiz
+from forms import UserCreateForm, QuizForm, QuestionForm
+from models import Quiz, Question
 
 
 def index(request):
@@ -35,6 +35,7 @@ def make_quiz(request):
 		mydata = dict()
 		for key, value in data.iteritems():
 			mydata[key] = value
+			mydata['author'] = request.user.id
 		form = QuizForm(mydata)
 		if form.is_valid():
 			form.save(request.user)
@@ -48,7 +49,20 @@ def write_question(request, quiz_id):
 		quiz = Quiz.objects.get(pk=quiz_id)
    	except Quiz.DoesNotExist:
         	raise Http404("Quiz does not exist")
-	return render(request, 'quiz/write_question.html', {'quiz': quiz})
+	if request.method=="POST":
+		data = request.POST
+		mydata = dict()
+		for key, value in data.iteritems():
+			mydata[key] = value
+			mydata['quiz'] = quiz_id
+		form = QuestionForm(mydata)
+		if form.is_valid():
+			form.save()
+			return HttpResponseRedirect('question')
+   	else:
+   		form = QuestionForm()
+   	
+	return render(request, 'quiz/write_question.html', {'quiz': quiz, 'form': form})
 
 def create_user(request):
 	if request.method=="POST":

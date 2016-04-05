@@ -2,10 +2,17 @@
 
 {% block content %}
 
-<h1>Lets write some questions</h1>
-<h2>Questions go here</h2>
+<div id="main">
+	<h1> You are writing questions for {{ quiz }} </h1>
+	<h2>{{url}}</h2>
+	<div class="container">
+		<form method="post">
+			{% csrf_token %}
+			{{ form.as_ul }}
+			<input type = "submit" value="Add questions"/>
+		</form>
+	</div>
+</div>
 
-<h3>choices go here</h3>
 
-{{ quiz }}
 {% endblock %}
