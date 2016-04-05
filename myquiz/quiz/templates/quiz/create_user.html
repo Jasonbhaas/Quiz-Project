@@ -1,0 +1,21 @@
+{% extends "quiz/base.html" %}
+
+{% block content %}
+
+<div id="header">
+	<h1>
+		Join Here:
+	</h1>
+</div>
+<div id="main">
+	<div class="container">
+		<form action='/sign_up' method = "post">
+			{% csrf_token%}
+			{{ form.as_ul }}
+			<input type="submit" value="Sign Up" />
+		</form>	
+	</div>
+</div>
+
+
+{% endblock %}

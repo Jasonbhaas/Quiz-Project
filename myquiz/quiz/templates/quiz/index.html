@@ -1,0 +1,27 @@
+{% extends "quiz/base.html" %}
+
+{% block content %}
+<div id="header">
+	<h1>
+		Welcome to Test Taker!
+	</h1>
+	<h2>Are you ready to take a test</h2>
+</div>
+<div id="main">
+	<div class="container">
+		<p>
+			These are the current tests available to you
+		</p>
+		<ul>
+      			  {% for quiz in quizzes %}
+	                    <li> <a href="/quiz/{{quiz.id}}">{{quiz.name }}</a></li>
+		        {% endfor %}
+                </ul>
+	</div>
+	
+</div>
+
+{% endblock %}
+<!-- 
+var d = document.getElementById("home");
+d.className = "active"; -->

@@ -1,0 +1,16 @@
+{% extends "quiz/base.html" %}
+
+{% block content %}
+
+<div id="main">
+	<h1> You are making a quiz. Nice Job! </h1>
+	<div class="container quiz_form">
+		<form action="/quiz/new/" method="post">
+			{% csrf_token %}
+			{{ form.as_ul}}
+			<input type = "submit" value="Add questions"/>
+		</form>
+	</div>
+</div>
+
+{% endblock %}

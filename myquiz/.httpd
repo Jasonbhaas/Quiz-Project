@@ -1,0 +1,19 @@
+<virtualhost jhaas.master.cs.haverford.edu:80>
+	ServerName jhaas.master.cs.haverford.edu
+
+	WSGIDaemonProcess jhaas.master.cs.haverford.edu python-path=/homes/jhaas/Databases/projects/quiz/myquiz
+	WSGIProcessGroup jhaas.master.cs.haverford.edu
+	WSGIScriptAlias / /homes/jhaas/Databases/projects/quiz/myquiz/myquiz/wsgi.py
+
+	Alias /static/ /homes/jhaas/Databases/projects/quiz/myquiz/static/
+
+	<Directory /homes/jhaas/Databases/projects/quiz/myquiz/myquiz/>
+		<Files wsgi.py>
+			Require all granted
+		</Files>
+	</Directory>
+
+	<Directory /homes/jhaas/Databases/projects/quiz/myquiz/static/>
+		Require all granted
+	</Directory>
+</virtualhost>
