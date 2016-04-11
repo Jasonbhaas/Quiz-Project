@@ -32,11 +32,11 @@ def question(request, question_id):
 def make_quiz(request):
 	if request.method=="POST":
 		data = request.POST
-		mydata = dict()
+		data_copy = dict()
 		for key, value in data.iteritems():
-			mydata[key] = value
-			mydata['author'] = request.user.id
-		form = QuizForm(mydata)
+			data_copy[key] = value
+			data_copy['author'] = request.user.id
+		form = QuizForm(data_copy)
 		if form.is_valid():
 			form.save(request.user)
 			return HttpResponseRedirect('/')
