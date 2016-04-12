@@ -1,5 +1,4 @@
 {% extends "quiz/base.html" %}
-
 {% block content %}
 
 <div id="main">
@@ -9,15 +8,11 @@
 	<div class="container quiz_form">
 		<ul>
 			{% for quiz in quizzes%}
-			<a href="/quiz/{{quiz.id}}/new/question"><li>{{quiz}}</li></a>
+				<a href="/take/{{quiz.id}}"><li>{{quiz}}</li></a>
 			{% endfor %}
 		</ul>
-		<form action="/quiz/new/" method="post">
-			{% csrf_token %}
-			{{ form.as_ul}}
-			<input type = "submit" value="Add questions"/>
-		</form>
 	</div>
 </div>
+
 
 {% endblock %}

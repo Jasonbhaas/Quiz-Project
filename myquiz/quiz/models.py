@@ -26,14 +26,17 @@ class Quiz(models.Model):
 class Question(models.Model):
     quiz = models.ForeignKey(Quiz)
     body = models.TextField()
-    order = models.IntegerField()
 
     def __str__(self):
-	return "{}.{}".format(self.quiz, self.order)
+	return "{}.{}".format(self.quiz, self.body)
 
 class Answer(models.Model):
     body = models.TextField()
-    point_value = models.IntegerField()
+    correctness_choices = (
+        (1, "Wrong"),
+        (2, "Partially Correct"),
+        (3, "Correct"))
+    point_value = models.IntegerField(choices=correctness_choices, default = 1)
     question = models.ForeignKey(Question)
 
     def __str__(self):
@@ -43,8 +46,9 @@ class Quiz_Attempt(models.Model):
     taker = models.ForeignKey(User)
     test = models.ForeignKey(Quiz)
     score = models.IntegerField()
-    start = models.DateField()
+    start = models.DateField(auto_now = True)
     end = models.DateField()
+    submitted = models.BooleanField(default = False)
 
 class Question_Attempt(models.Model):
     quiz = models.ForeignKey(Quiz_Attempt)

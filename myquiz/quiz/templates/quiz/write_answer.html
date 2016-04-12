@@ -1,0 +1,27 @@
+{% extends "quiz/base.html" %}
+
+{% block content %}
+
+<div id="main">
+	<h1> You are writing answers for {{ question }} </h1>
+	<h2>{{url}}</h2>
+	<div class="container">
+		<ul>
+			{% for answer in answers %}
+				<li>{{answer.body}}</li>
+			{% endfor %}
+		</ul>
+
+		<form method="post">
+			{% csrf_token %}
+			{{ form.as_ul }}
+			<input type = "submit" value="Add answer"/>
+		</form>
+		<br/>
+		<br/>
+		<a href="/quiz/{{ question.quiz.id }}/new/question"><button>Return to Quiz</button></a>
+	</div>
+</div>
+
+
+{% endblock %}

@@ -11,7 +11,7 @@
 			<ul>
 				<li><a class="active" id="home" href="/">Home</a></li>
 				<li><a id="review" review href="review.html">Revew Past Quizes</a></li>
-				<li><a id="take" href="quizes.html">Take a Quiz</a></li>
+				<li><a id="take" href="{% url 'take_quiz' %}">Take a Quiz</a></li>
 				<li><a id="make" href ="{% url 'make_quiz' %}">Make a Quiz</a></li>
 				{% if user.is_authenticated %}
 					<li><a id="sign_out" href="{% url 'log_out' %}">Log Out</a></li>

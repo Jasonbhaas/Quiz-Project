@@ -6,11 +6,18 @@
 	<h1> You are writing questions for {{ quiz }} </h1>
 	<h2>{{url}}</h2>
 	<div class="container">
+		<ul>
+			{% for question in questions %}
+				<a href="/question/{{ question.id }}/new/answer"><li>{{question.body}}</li></a>
+			{% endfor %}
+		</ul>
+
 		<form method="post">
 			{% csrf_token %}
 			{{ form.as_ul }}
 			<input type = "submit" value="Add questions"/>
 		</form>
+		<a href ="{% url 'make_quiz' %}"><button>Return to Quizzes</button>
 	</div>
 </div>
 

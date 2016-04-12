@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from models import Quiz, Question
+from models import Quiz, Question, Answer
 
 class UserCreateForm(UserCreationForm):
 	email = forms.EmailField(required=True)
@@ -25,4 +25,9 @@ class QuizForm(forms.ModelForm):
 class QuestionForm(forms.ModelForm):
 	class Meta:
 		model = Question
+		exclude = ()
+
+class AnswerForm(forms.ModelForm):
+	class Meta:
+		model = Answer
 		exclude = ()
