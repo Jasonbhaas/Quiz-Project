@@ -5,7 +5,7 @@ from django .shortcuts import render
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
-from forms import UserCreateForm, QuizForm, QuestionForm, AnswerForm
+from forms import UserCreateForm, QuizForm, QuestionForm, AnswerForm, Quiz_AttemptForm
 from models import Quiz, Question, Answer, Quiz_Attempt
 
 
@@ -136,8 +136,11 @@ def begin_quiz(request, quiz_id):
     try:
         attempt = Quiz_Attempt.objects.get(taker = request.user.id , test = quiz_id)
     except Quiz_Attempt.DoesNotExist:
-        attempt = Quiz_Attempt(taker = request.user.id , test = quiz_id)
-        attempt.save()
+	data = {'test': quiz_id, 'taker': request.user.id}
+        form = Quiz_AttemptForm(data)
+	if form.is_valid():
+		form.save()
+		HttpResponseRedirect('/')
         #make new quiz attempt for them. We sould expect this
     if attempt.submitted:
         return HttpResponseRedirect('/')

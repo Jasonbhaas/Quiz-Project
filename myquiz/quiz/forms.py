@@ -31,3 +31,8 @@ class AnswerForm(forms.ModelForm):
 	class Meta:
 		model = Answer
 		exclude = ()
+
+Class Quiz_AttemptForm(forms.ModelForm):
+	class Meta:
+		model = Quiz_Attempt
+		include = (taker, test)
