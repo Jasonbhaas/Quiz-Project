@@ -40,4 +40,4 @@ class AnswerForm(forms.ModelForm):
 class Quiz_AttemptForm(forms.ModelForm):
     class Meta:
         model = Quiz_Attempt
-        include = (taker, test)
+        fields = ("taker", "test")

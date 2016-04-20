@@ -32,25 +32,25 @@ class Answer(models.Model):
     question = models.ForeignKey(Question)
 
     def __str__(self):
-        return str(self.question) + ".answer"
+        return str(self.body)
 
 
 class Quiz_Attempt(models.Model):
     taker = models.ForeignKey(User)
     test = models.ForeignKey(Quiz)
-    score = models.IntegerField()
+    score = models.IntegerField(null=True)
     start = models.DateField(auto_now=True)
-    end = models.DateField()
+    end = models.DateField(null=True)
     submitted = models.BooleanField(default=False)
 
 
 class Question_Attempt(models.Model):
     quiz = models.ForeignKey(Quiz_Attempt)
     question = models.ForeignKey(Question)
-    start = models.DateField()
-    end = models.DateField()
+    start = models.DateField(auto_now=True)
+    end = models.DateField(null=True)
 
 
 class Answer_Attempt(models.Model):
-    question = models.ForeignKey(Question_Attempt)
+    question = models.ForeignKey(Quiz_Attempt)
     answer = models.ForeignKey(Answer)

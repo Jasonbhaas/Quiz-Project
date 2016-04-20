@@ -15,6 +15,8 @@ urlpatterns = [
     url(r'^log_in', views.log_in, name="log_in"),
     url(r'^log_out', views.log_out, name="log_out"),
     url('^change_password/', auth_views.password_change),
-    url(r'^take_quiz', views.take_quiz, name="take_quiz"),
-    url(r'^take/(?P<quiz_id>[0-9]+)', views.begin_quiz, name="begin_quiz"),
+    url(r'^take_quiz/$', views.take_quiz, name="take_quiz"),
+    url(r'^take_quiz/(?P<quiz_id>[0-9]+)/confirm', views.confirm_quiz, name="confirm_quiz"),
+    url(r'^take/(?P<quiz_id>[0-9]+)/$', views.begin_quiz, name="begin_quiz"),
+    url(r'^take/(?P<quiz_id>[0-9]+)/(?P<question_id>[0-9]+)', views.answer_question, name="begin_quiz"),
 ]

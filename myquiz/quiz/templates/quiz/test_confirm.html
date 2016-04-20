@@ -1,0 +1,12 @@
+{% extends "quiz/base.html" %}
+{% block content %}
+
+<div id="main">
+	<div class="container">
+		<h1>{{quiz}} </h1>
+		<h4>Please confirm that you are starting this quiz</h4>
+		<p>Description: {{quiz.description}}</p>
+		<a href='/take/{{quiz.id}}'><Button>Start Quiz</Button></a>
+	</div>
+</div>
+{% endblock %}

@@ -6,7 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from forms import UserCreateForm, QuizForm, QuestionForm, AnswerForm, Quiz_AttemptForm
-from models import Quiz, Question, Answer, Quiz_Attempt
+from models import Quiz, Question, Answer, Quiz_Attempt, Question_Attempt, Answer_Attempt
 
 
 def index(request):
@@ -129,11 +129,20 @@ def log_out(request):
 @login_required
 def take_quiz(request):
     quizzes = Quiz.objects.all()
-    return render(request, 'quiz/take_quiz.html', context={'quizzes': quizzes})
+    new_quizzes= []
+    in_progress_quizzes= []
+    for quiz in quizzes:
+        try:
+            attempt = Quiz_Attempt.objects.get(taker=request.user.id, test=quiz.id)
+            if attempt.submitted == False:
+                in_progress_quizzes += [quiz]
+        except Quiz_Attempt.DoesNotExist:
+            new_quizzes += [quiz]
+    return render(request, 'quiz/take_quiz.html', context={'new_quizzes': new_quizzes, 'in_progress_quizzes': in_progress_quizzes})
 
 
 @login_required
-def begin_quiz(request, quiz_id):
+def confirm_quiz(request, quiz_id):
     try:
         quiz = Quiz.objects.get(pk=quiz_id)
     except Quiz.DoesNotExist:
@@ -141,14 +150,51 @@ def begin_quiz(request, quiz_id):
 
     try:
         attempt = Quiz_Attempt.objects.get(taker=request.user.id, test=quiz_id)
+        if attempt.submitted:
+            return HttpResponseRedirect('already taken this quiz')
+        else:
+            return HttpResponseRedirect('/take/{{quiz.id}}')
+    except Quiz_Attempt.DoesNotExist:
+        return render(request, 'quiz/test_confirm.html', context={'quiz': quiz})
+        # make new quiz attempt for them. We sould expect this
+   
+
+@login_required
+def begin_quiz(request, quiz_id):
+    try:
+        quiz = Quiz.objects.get(pk=quiz_id)
+    except Quiz.DoesNotExist:
+        raise Http404("Quiz does not exist")
+    questions = Question.objects.filter(quiz = quiz_id).order_by('id')
+    question = questions[0]
+    try:
+        attempt = Quiz_Attempt.objects.get(taker=request.user.id, test=quiz_id)
     except Quiz_Attempt.DoesNotExist:
         data = {'test': quiz_id, 'taker': request.user.id}
         form = Quiz_AttemptForm(data)
-    if form.is_valid():
-        form.save()
-        HttpResponseRedirect('/')
+        if form.is_valid():
+            form.save()
+            attempt = Quiz_Attempt.objects.get(taker=request.user.id, test=quiz_id)
         # make new quiz attempt for them. We sould expect this
     if attempt.submitted:
-        return HttpResponseRedirect('/')
+        return HttpResponseRedirect('already taken this quiz')
     else:
-        return render(request, 'quiz/take.html', context={'quiz': quiz, 'attempt': attempt})
+        return render(request, 'quiz/instructions.html', context={'quiz': quiz, 'question': question})
+
+@login_required
+def answer_question(request, quiz_id, question_id):
+    if request.method== "GET":
+        quiz = Quiz.objects.get(pk=quiz_id)
+        question = Question.objects.get(pk=question_id)
+        answers = Answer.objects.filter(question = question_id)
+        quiz_attempt = Quiz_Attempt.objects.get(taker=request.user.id, test=quiz_id)
+        if quiz_attempt.submitted:
+            return HttpResponseRedirect('already taken this quiz')
+        else:
+            try:
+                question_attempt = Question_Attempt.objects.get(quiz=quiz_attempt, question= question)
+            except Question_Attempt.DoesNotExist:
+                question_attempt = Question_Attempt(quiz=quiz_attempt, question= question)
+                question_attempt.save()
+        return render(request, 'quiz/answer_question.html', context={'quiz': quiz, 'question': question, 'answers': answers})
+            

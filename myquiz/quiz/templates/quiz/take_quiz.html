@@ -2,13 +2,21 @@
 {% block content %}
 
 <div id="main">
-	<h1> All current quizzes </h1>
+	<h1> Select a quiz to take </h1>
 	
 	
 	<div class="container quiz_form">
+		<h3>New Quizzes</h3>
 		<ul>
-			{% for quiz in quizzes%}
-				<a href="/take/{{quiz.id}}"><li>{{quiz}}</li></a>
+			{% for quiz in new_quizzes%}
+				<a href="/take_quiz/{{quiz.id}}/confirm"><li>{{quiz}}</li></a>
+			{% endfor %}
+		</ul>
+		<br><br>
+		<h3>Quizzes in progress</h3>
+		<ul>
+			{% for quiz in in_progress_quizzes%}
+			<a href="/take/{{quiz.id}}"><li>{{quiz}}</li></a>
 			{% endfor %}
 		</ul>
 	</div>
