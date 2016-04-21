@@ -5,7 +5,7 @@ from django .shortcuts import render
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
-from forms import UserCreateForm, QuizForm, QuestionForm, AnswerForm, Quiz_AttemptForm
+from forms import UserCreateForm, QuizForm, QuestionForm, AnswerForm, Quiz_AttemptForm, Answer_AttemptForm
 from models import Quiz, Question, Answer, Quiz_Attempt, Question_Attempt, Answer_Attempt
 
 
@@ -186,7 +186,6 @@ def answer_question(request, quiz_id, question_id):
     if request.method== "GET":
         quiz = Quiz.objects.get(pk=quiz_id)
         question = Question.objects.get(pk=question_id)
-        answers = Answer.objects.filter(question = question_id)
         quiz_attempt = Quiz_Attempt.objects.get(taker=request.user.id, test=quiz_id)
         if quiz_attempt.submitted:
             return HttpResponseRedirect('already taken this quiz')
@@ -196,5 +195,31 @@ def answer_question(request, quiz_id, question_id):
             except Question_Attempt.DoesNotExist:
                 question_attempt = Question_Attempt(quiz=quiz_attempt, question= question)
                 question_attempt.save()
-        return render(request, 'quiz/answer_question.html', context={'quiz': quiz, 'question': question, 'answers': answers})
+        answers = Answer.objects.filter(question = question_id)
+        
+        forms = []
+        for answer in answers:
+            try:
+                answer_attempt = Answer_Attempt.objects.get(question= question_attempt.id, answer= asnwer.id)
+                forms += [answer, True, Answer_AttemptForm( {'question': question_attempt.id, 'answer': answer.id})]
+            except Answer_Attempt.DoesNotExist:
+                forms += [answer, False, Answer_AttemptForm({'question': question_attempt.id, 'answer': answer.id})]
+        return render(request, 'quiz/answer_question.html', context={'quiz': quiz, 'forms':forms, 'question': question, 'answers': answers})
             
+
+        def delete_new(request, new_id):
+    new_to_delete = get_object_or_404(New, id=new_id)
+    #+some code to check if this object belongs to the logged in user
+
+    if request.method == 'POST':
+        form = DeleteNewForm(request.POST, instance=new_to_delete)
+
+        if form.is_valid(): # checks CSRF
+            new_to_delete.delete()
+            return HttpResponseRedirect("/") # wherever to go after deleting
+
+    else:
+        form = DeleteNewForm(instance=new_to_delete)
+
+    template_vars = {'form': form}
+    return render(request, 'news/deleteNew.html', template_vars)

@@ -10,6 +10,11 @@
 				<li>A: {{answer}}</li>
 			{% endfor %}
 		</ul>
+		<form action="" method="post">
+			{% csrf_token %}
+			{{ form.as_ul}}
+			<input type = "submit" value="Submit answer"/>
+		</form>
 	</div>
 </div>
 {% endblock %}

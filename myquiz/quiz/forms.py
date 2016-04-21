@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from models import Quiz, Question, Answer, Quiz_Attempt
+from models import Quiz, Question, Answer, Quiz_Attempt, Answer_Attempt
 
 
 class UserCreateForm(UserCreationForm):
@@ -23,21 +23,48 @@ class QuizForm(forms.ModelForm):
     class Meta:
         model = Quiz
         exclude = ()
+        widgets = {
+            'author': forms.HiddenInput(),
+        }
 
 
 class QuestionForm(forms.ModelForm):
     class Meta:
         model = Question
         exclude = ()
+        widgets = {
+            'quiz': forms.HiddenInput(),
+        }
 
 
 class AnswerForm(forms.ModelForm):
     class Meta:
         model = Answer
         exclude = ()
+        widgets = {
+            'question': forms.HiddenInput(),
+        }
 
 
 class Quiz_AttemptForm(forms.ModelForm):
     class Meta:
         model = Quiz_Attempt
         fields = ("taker", "test")
+
+class Answer_AttemptForm(forms.ModelForm):
+    class Meta:
+        model = Answer_Attempt
+        exclude = ()
+        widgets = {
+            'question': forms.HiddenInput(),
+            'answer': forms.HiddenInput(),
+        }
+
+class Answer_Attempt_DeleteForm(forms.ModelForm):
+    class Meta:
+        model = Answer_Attempt
+        exclude = ()
+        widgets = {
+            'question': forms.HiddenInput(),
+            'answer': forms.HiddenInput(),
+        }

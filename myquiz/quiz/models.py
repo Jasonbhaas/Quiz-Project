@@ -52,5 +52,5 @@ class Question_Attempt(models.Model):
 
 
 class Answer_Attempt(models.Model):
-    question = models.ForeignKey(Quiz_Attempt)
+    question = models.ForeignKey(Question_Attempt)
     answer = models.ForeignKey(Answer)
