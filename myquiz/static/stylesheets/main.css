@@ -86,6 +86,6 @@ a {
   position: center;
 }
 
-li .answered {
+#answered {
   color: green;
 }

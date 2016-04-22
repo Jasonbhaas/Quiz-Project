@@ -10,7 +10,7 @@
 				{% if form.1 %}
 					<form action="" method="post">
 						{% csrf_token %}
-						<li class="answered">A: {{form.0}}   {{ form.2 }}</li>
+						<li id="answered">A: {{form.0}}   {{ form.2 }}</li>
 						<input type = "submit" value="Deselect answer"/>
 					</form>
 				{% else %}
@@ -22,9 +22,10 @@
 				{% endif %}
 				
 			{% endfor %}
-			}
 		</ul>
-		
+		<span>
+			<a href="/take/{{quiz.id}}/{{prev_q}}"><button>Previous Question</button></a>
+			<a href="/take/{{quiz.id}}/{{next_q}}"><button>Next Question</button></button></a></span>
 	</div>
 </div>
 {% endblock %}

@@ -60,11 +60,13 @@ class Answer_AttemptForm(forms.ModelForm):
             'answer': forms.HiddenInput(),
         }
 
-class Answer_Attempt_DeleteForm(forms.ModelForm):
+class Quiz_Attempt_SubmitForm(forms.ModelForm):
     class Meta:
-        model = Answer_Attempt
-        exclude = ()
+        model = Quiz_Attempt
+        exclude = ('score', 'start')
         widgets = {
-            'question': forms.HiddenInput(),
-            'answer': forms.HiddenInput(),
+            'taker': forms.HiddenInput(),
+            'test': forms.HiddenInput(),
+            'end': forms.HiddenInput(),
+            'submitted': forms.HiddenInput(),
         }

@@ -1,11 +1,12 @@
 from django.shortcuts import render
+import datetime
 from django.http import HttpResponse, HttpResponseRedirect,  Http404
 from django .template import loader
 from django .shortcuts import render
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
-from forms import UserCreateForm, QuizForm, QuestionForm, AnswerForm, Quiz_AttemptForm, Answer_AttemptForm
+from forms import UserCreateForm, QuizForm, QuestionForm, AnswerForm, Quiz_AttemptForm, Answer_AttemptForm, Quiz_Attempt_SubmitForm
 from models import Quiz, Question, Answer, Quiz_Attempt, Question_Attempt, Answer_Attempt
 
 
@@ -185,6 +186,17 @@ def begin_quiz(request, quiz_id):
 def answer_question(request, quiz_id, question_id):
     quiz = Quiz.objects.get(pk=quiz_id)
     question = Question.objects.get(pk=question_id)
+    questions = list(Question.objects.filter(quiz = quiz_id).order_by('id'))
+    index = questions.index(question)
+    try:
+        next_q = questions[index+1].id
+    except IndexError:
+        next_q = "submit"
+    if index == 0:
+        prev_q = ""
+    else:
+        prev_q =  questions[index-1].id
+
     quiz_attempt = Quiz_Attempt.objects.get(taker=request.user.id, test=quiz_id)
     if quiz_attempt.submitted:
         return HttpResponseRedirect('already taken this quiz')
@@ -214,4 +226,18 @@ def answer_question(request, quiz_id, question_id):
             forms += [[answer, True, Answer_AttemptForm( {'question': question_attempt.id, 'answer': answer.id})]]
         except Answer_Attempt.DoesNotExist:
             forms += [[answer, False, Answer_AttemptForm({'question': question_attempt.id, 'answer': answer.id})]]
-    return render(request, 'quiz/answer_question.html', context={'quiz': quiz, 'forms':forms, 'question': question, 'answers': answers})
+    return render(request, 'quiz/answer_question.html', context={'quiz': quiz, 'forms':forms, 'question': question,
+                'answers': answers, 'index': index, 'next_q': next_q, 'prev_q': prev_q})
+
+@login_required
+def quiz_submit(request, quiz_id):
+    if request.method =="POST":
+        attempt = Quiz_Attempt.objects.get(taker=request.user.id, test=quiz_id)
+        attempt.end = datetime.datetime.now()
+        attempt.submitted= True
+        attempt.save()
+        return HttpResponseRedirect('/take_quiz')
+    form = Quiz_Attempt_SubmitForm()
+    return render(request, 'quiz/submit.html', context={'quiz_id': quiz_id, 'form': form})
+        
+        

@@ -47,8 +47,8 @@ class Quiz_Attempt(models.Model):
 class Question_Attempt(models.Model):
     quiz = models.ForeignKey(Quiz_Attempt)
     question = models.ForeignKey(Question)
-    start = models.DateField(auto_now=True)
-    end = models.DateField(null=True)
+    start = models.DateTimeField(auto_now=True)
+    end = models.DateTimeField(null=True)
 
 
 class Answer_Attempt(models.Model):
