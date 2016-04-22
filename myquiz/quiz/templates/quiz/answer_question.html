@@ -7,16 +7,16 @@
 		<p>Q: {{question.body}}</p>
 		<ul>
 			{% for form in forms%}
-				{{ if form[1] }}
+				{% if form.1 %}
 					<form action="/delete/answer" method="post">
 						{% csrf_token %}
-						<li class="answered">A: {{answer}}   {{ form[2] }}</li>
+						<li class="answered">A: {{form.0}}   {{ form.2 }}</li>
 						<input type = "submit" value="Deselect answer"/>
 					</form>
 				{% else %}
 					<form action = "" method="post">
 					{% csrf_token %}
-						<li>A: {{answer}}   {{'form[2]'}} </li>
+						<li>A: {{form.0}}   {{ form.2 }} </li>
 						<input type = "submit" value="Select answer"/>
 					</form>
 				{% endif %}
