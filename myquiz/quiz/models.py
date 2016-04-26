@@ -11,7 +11,7 @@ class Quiz(models.Model):
     author = models.ForeignKey(User)
 
     def __str__(self):
-        return self.subject + "-" + self.name
+        return "{} - {}".format(self.subject, self.name)
 
 
 class Question(models.Model):
@@ -19,7 +19,7 @@ class Question(models.Model):
     body = models.TextField()
 
     def __str__(self):
-        return "{}.{}".format(self.quiz, self.body)
+        return "Quiz: {}, Question: {}".format(self.quiz, self.body)
 
 
 class Answer(models.Model):
@@ -32,7 +32,8 @@ class Answer(models.Model):
     question = models.ForeignKey(Question)
 
     def __str__(self):
-        return str(self.body)
+        return "Quiz: {}, Question: {}, ID: {}".format(
+            self.question.quiz, self.question.id, self.id)
 
 
 class Quiz_Attempt(models.Model):
