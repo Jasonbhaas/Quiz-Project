@@ -224,20 +224,33 @@ def answer_question(request, quiz_id, question_id):
     for answer in answers:
         try:
             answer_attempt = Answer_Attempt.objects.get(question=question_attempt.id, answer=answer.id)
-            forms += [[answer, True, Answer_AttemptForm({'question': question_attempt.id, 'answer': answer.id})]]
+            forms += [[answer.body, True, Answer_AttemptForm({'question': question_attempt.id, 'answer': answer.id})]]
         except Answer_Attempt.DoesNotExist:
-            forms += [[answer, False, Answer_AttemptForm({'question': question_attempt.id, 'answer': answer.id})]]
+            forms += [[answer.body, False, Answer_AttemptForm({'question': question_attempt.id, 'answer': answer.id})]]
     return render(request, 'quiz/answer_question.html', context={'quiz': quiz, 'forms': forms, 'question': question,
                   'answers': answers, 'index': index, 'next_q': next_q, 'prev_q': prev_q})
 
 
 @login_required
 def quiz_submit(request, quiz_id):
-    if request.method =="POST":
+    if request.method == "POST":
         attempt = Quiz_Attempt.objects.get(taker=request.user.id, test=quiz_id)
         attempt.end = datetime.datetime.now()
-        attempt.submitted= True
+        attempt.submitted = True
+        attempt.score = score(attempt)
         attempt.save()
         return HttpResponseRedirect('/take_quiz')
     form = Quiz_Attempt_SubmitForm()
     return render(request, 'quiz/submit.html', context={'quiz_id': quiz_id, 'form': form})
+
+
+def score(attempt):
+    score = 0
+    question_attempts = Question_Attempt.objects.filter(quiz=attempt.id)
+    for q in question_attempts:
+        tally = [0, 0, 0]
+        answers = Answer_Attempt.objects.filter(question=q)
+        for a in answers:
+            tally[a.answer.point_value-1] += 1
+        score += (0**tally[0])*(.5**tally[1])*tally[2]
+    return score
