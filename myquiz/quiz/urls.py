@@ -20,5 +20,7 @@ urlpatterns = [
     url(r'^take/(?P<quiz_id>[0-9]+)/$', views.begin_quiz, name="begin_quiz"),
     url(r'^take/(?P<quiz_id>[0-9]+)/(?P<question_id>[0-9]+)', views.answer_question, name="begin_quiz"),
     url(r'^take/(?P<quiz_id>[0-9]+)/submit', views.quiz_submit, name="submit_quiz"),
-
+    url(r'^take/(?P<quiz_id>[0-9]+)/submit', views.quiz_submit, name="submit_quiz"),
+    url(r'^revies/$', views.review, name="review"),
+)
 ]

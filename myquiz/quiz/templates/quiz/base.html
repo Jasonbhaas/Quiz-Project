@@ -10,7 +10,7 @@
 		<nav id="nav">
 			<ul>
 				<li><a class="active" id="home" href="/">Home</a></li>
-				<li><a id="review" review href="review.html">Revew Past Quizes</a></li>
+				<li><a id="review" review href="{% url 'review' %}">Revew Past Quizes</a></li>
 				<li><a id="take" href="{% url 'take_quiz' %}">Take a Quiz</a></li>
 				<li><a id="make" href ="{% url 'make_quiz' %}">Make a Quiz</a></li>
 				{% if user.is_authenticated %}
