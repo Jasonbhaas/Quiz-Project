@@ -130,12 +130,12 @@ def log_out(request):
 @login_required
 def take_quiz(request):
     quizzes = Quiz.objects.all()
-    new_quizzes= []
-    in_progress_quizzes= []
+    new_quizzes = []
+    in_progress_quizzes = []
     for quiz in quizzes:
         try:
             attempt = Quiz_Attempt.objects.get(taker=request.user.id, test=quiz.id)
-            if attempt.submitted == False:
+            if attempt.submitted is False:
                 in_progress_quizzes += [quiz]
         except Quiz_Attempt.DoesNotExist:
             new_quizzes += [quiz]
@@ -158,7 +158,7 @@ def confirm_quiz(request, quiz_id):
     except Quiz_Attempt.DoesNotExist:
         return render(request, 'quiz/test_confirm.html', context={'quiz': quiz})
         # make new quiz attempt for them. We sould expect this
-   
+
 
 @login_required
 def begin_quiz(request, quiz_id):
@@ -166,7 +166,7 @@ def begin_quiz(request, quiz_id):
         quiz = Quiz.objects.get(pk=quiz_id)
     except Quiz.DoesNotExist:
         raise Http404("Quiz does not exist")
-    questions = Question.objects.filter(quiz = quiz_id).order_by('id')
+    questions = Question.objects.filter(quiz=quiz_id).order_by('id')
     question = questions[0]
     try:
         attempt = Quiz_Attempt.objects.get(taker=request.user.id, test=quiz_id)
@@ -182,11 +182,12 @@ def begin_quiz(request, quiz_id):
     else:
         return render(request, 'quiz/instructions.html', context={'quiz': quiz, 'question': question})
 
+
 @login_required
 def answer_question(request, quiz_id, question_id):
     quiz = Quiz.objects.get(pk=quiz_id)
     question = Question.objects.get(pk=question_id)
-    questions = list(Question.objects.filter(quiz = quiz_id).order_by('id'))
+    questions = list(Question.objects.filter(quiz=quiz_id).order_by('id'))
     index = questions.index(question)
     try:
         next_q = questions[index+1].id
@@ -195,39 +196,40 @@ def answer_question(request, quiz_id, question_id):
     if index == 0:
         prev_q = ""
     else:
-        prev_q =  questions[index-1].id
+        prev_q = questions[index-1].id
 
     quiz_attempt = Quiz_Attempt.objects.get(taker=request.user.id, test=quiz_id)
     if quiz_attempt.submitted:
         return HttpResponseRedirect('already taken this quiz')
     else:
         try:
-            question_attempt = Question_Attempt.objects.get(quiz=quiz_attempt, question= question)
+            question_attempt = Question_Attempt.objects.get(quiz=quiz_attempt, question=question)
         except Question_Attempt.DoesNotExist:
-            question_attempt = Question_Attempt(quiz=quiz_attempt, question= question)
+            question_attempt = Question_Attempt(quiz=quiz_attempt, question=question)
             question_attempt.save()
 
-    if request.method== "POST":
+    if request.method == "POST":
         try:
             post_question = request.POST['question']
             post_answer = request.POST['answer']
-            answer_attempt = Answer_Attempt.objects.get(question= post_question, answer= post_answer)
+            answer_attempt = Answer_Attempt.objects.get(question=post_question, answer=post_answer)
             answer_attempt.delete()
         except Answer_Attempt.DoesNotExist:
             form = Answer_AttemptForm(request.POST)
             if form.is_valid():
                 form.save(request.user)
-    
-    answers = Answer.objects.filter(question = question_id)
+
+    answers = Answer.objects.filter(question=question_id)
     forms = []
     for answer in answers:
         try:
-            answer_attempt = Answer_Attempt.objects.get(question= question_attempt.id, answer= answer.id)
-            forms += [[answer, True, Answer_AttemptForm( {'question': question_attempt.id, 'answer': answer.id})]]
+            answer_attempt = Answer_Attempt.objects.get(question=question_attempt.id, answer=answer.id)
+            forms += [[answer, True, Answer_AttemptForm({'question': question_attempt.id, 'answer': answer.id})]]
         except Answer_Attempt.DoesNotExist:
             forms += [[answer, False, Answer_AttemptForm({'question': question_attempt.id, 'answer': answer.id})]]
-    return render(request, 'quiz/answer_question.html', context={'quiz': quiz, 'forms':forms, 'question': question,
-                'answers': answers, 'index': index, 'next_q': next_q, 'prev_q': prev_q})
+    return render(request, 'quiz/answer_question.html', context={'quiz': quiz, 'forms': forms, 'question': question,
+                  'answers': answers, 'index': index, 'next_q': next_q, 'prev_q': prev_q})
+
 
 @login_required
 def quiz_submit(request, quiz_id):
@@ -239,5 +241,3 @@ def quiz_submit(request, quiz_id):
         return HttpResponseRedirect('/take_quiz')
     form = Quiz_Attempt_SubmitForm()
     return render(request, 'quiz/submit.html', context={'quiz_id': quiz_id, 'form': form})
-        
-        

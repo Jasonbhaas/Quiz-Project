@@ -51,6 +51,7 @@ class Quiz_AttemptForm(forms.ModelForm):
         model = Quiz_Attempt
         fields = ("taker", "test")
 
+
 class Answer_AttemptForm(forms.ModelForm):
     class Meta:
         model = Answer_Attempt
@@ -60,6 +61,7 @@ class Answer_AttemptForm(forms.ModelForm):
             'answer': forms.HiddenInput(),
         }
 
+
 class Quiz_Attempt_SubmitForm(forms.ModelForm):
     class Meta:
         model = Quiz_Attempt
@@ -68,5 +70,4 @@ class Quiz_Attempt_SubmitForm(forms.ModelForm):
             'taker': forms.HiddenInput(),
             'test': forms.HiddenInput(),
             'end': forms.HiddenInput(),
-            'submitted': forms.HiddenInput(),
-        }
+            'submitted': forms.HiddenInput()}
