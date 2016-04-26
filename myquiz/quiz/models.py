@@ -43,6 +43,9 @@ class Quiz_Attempt(models.Model):
     end = models.DateField(null=True)
     submitted = models.BooleanField(default=False)
 
+    def __str__(self):
+        return "{}.{}".format(self.taker, self.test.name)
+
 
 class Question_Attempt(models.Model):
     quiz = models.ForeignKey(Quiz_Attempt)
@@ -50,7 +53,13 @@ class Question_Attempt(models.Model):
     start = models.DateTimeField(auto_now=True)
     end = models.DateTimeField(null=True)
 
+    def __str__(self):
+        return "{}.{}".format(self.quiz, self.question.id)
+
 
 class Answer_Attempt(models.Model):
     question = models.ForeignKey(Question_Attempt)
     answer = models.ForeignKey(Answer)
+
+    def __str__(self):
+        return "{} {}".format(self.question, self.answer)
