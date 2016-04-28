@@ -10,11 +10,11 @@
 <div id="main">
 	<div class="container">
 		<p>
-			These are the current tests available to you
+			These are the tests currently available on TestTaker!
 		</p>
 		<ul>
       			  {% for quiz in quizzes %}
-	                    <li> <a href="/quiz/{{quiz.id}}">{{quiz.name }}</a></li>
+	                    <li> {{quiz}}</a></li>
 		        {% endfor %}
                 </ul>
 	</div>

@@ -5,7 +5,7 @@ from django .template import loader
 from django .shortcuts import render
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from forms import UserCreateForm, QuizForm, QuestionForm, AnswerForm, Quiz_AttemptForm, Answer_AttemptForm, Quiz_Attempt_SubmitForm
 from models import Quiz, Question, Answer, Quiz_Attempt, Question_Attempt, Answer_Attempt
 
@@ -19,20 +19,7 @@ def index(request):
     return HttpResponse(template.render(context, request))
 
 
-def quiz(request, quiz_id):
-    try:
-        quiz = Quiz.objects.get(pk=quiz_id)
-    except Quiz.DoesNotExist:
-        raise Http404("Quiz does not exist")
-    return render(request, 'quiz/quiz.html', {'quiz': quiz})
-
-
-def question(request, question_id):
-    response = "You're looking at the question %s."
-    return HttpResponse(response % question_id)
-
-
-@login_required
+@user_passes_test(lambda u: u.is_superuser)
 def make_quiz(request):
     quizzes = Quiz.objects.all()
     if request.method == "POST":
@@ -44,12 +31,12 @@ def make_quiz(request):
         form = QuizForm(data_copy)
         if form.is_valid():
             form.save(request.user)
-            return HttpResponseRedirect('/')
+            return HttpResponseRedirect('/quiz/new')
     else:
         form = QuizForm()
     return render(request, 'quiz/make_quiz.html', context={'form':form, 'quizzes':quizzes})
 
-
+@user_passes_test(lambda u: u.is_superuser)
 def write_question(request, quiz_id):
     try:
         quiz = Quiz.objects.get(pk=quiz_id)
@@ -70,7 +57,7 @@ def write_question(request, quiz_id):
         form = QuestionForm()
     return render(request, 'quiz/write_question.html', {'quiz': quiz, 'form': form, 'questions' : questions})
 
-
+@user_passes_test(lambda u: u.is_superuser)
 def write_answer(request, question_id):
     answers = Answer.objects.all().filter(question=question_id)
     try:

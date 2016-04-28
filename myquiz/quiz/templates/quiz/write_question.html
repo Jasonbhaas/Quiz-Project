@@ -3,15 +3,17 @@
 {% block content %}
 
 <div id="main">
-	<h1> You are writing questions for {{ quiz }} </h1>
-	<h2>{{url}}</h2>
+	<h2> You are writing questions for {{ quiz }} </h2>
+	
 	<div class="container">
+	<h4>These are all the current questions for this quiz.
+	Click on the question to add answers.</h4>
 		<ul>
 			{% for question in questions %}
 				<a href="/question/{{ question.id }}/new/answer"><li>{{question.body}}</li></a>
 			{% endfor %}
 		</ul>
-
+		<h4>You can add a new question by writing the body below.</h4>
 		<form method="post">
 			{% csrf_token %}
 			{{ form.as_ul }}

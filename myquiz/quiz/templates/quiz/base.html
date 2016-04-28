@@ -12,7 +12,9 @@
 				<li><a class="active" id="home" href="/">Home</a></li>
 				<li><a id="review" review href="{% url 'review' %}">Revew Past Quizes</a></li>
 				<li><a id="take" href="{% url 'take_quiz' %}">Take a Quiz</a></li>
+				{% if user.is_superuser %}
 				<li><a id="make" href ="{% url 'make_quiz' %}">Make a Quiz</a></li>
+				{% endif %}
 				{% if user.is_authenticated %}
 					<li><a id="sign_out" href="{% url 'log_out' %}">Log Out</a></li>
 				{% else %}

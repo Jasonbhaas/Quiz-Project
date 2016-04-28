@@ -3,14 +3,17 @@
 {% block content %}
 
 <div id="main">
-	<h1> You are writing answers for {{ question }} </h1>
-	<h2>{{url}}</h2>
+	<h2> You are writing answers for {{ question.quiz }} </h2>
 	<div class="container">
+	<h4>The Question is: {{question.body}}</h4>
+	<h4>The current answers are: </h4>
+	
 		<ul>
 			{% for answer in answers %}
 				<li>{{answer.body}}</li>
 			{% endfor %}
 		</ul>
+		<h4>Add a new answer below:</h4>
 
 		<form method="post">
 			{% csrf_token %}

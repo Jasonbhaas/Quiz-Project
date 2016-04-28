@@ -7,11 +7,13 @@
 	
 	
 	<div class="container quiz_form">
+		<h4>Select any of the existing quizzes to add questions and answers.</h4>
 		<ul>
 			{% for quiz in quizzes%}
 			<a href="/quiz/{{quiz.id}}/new/question"><li>{{quiz}}</li></a>
 			{% endfor %}
 		</ul>
+		<h4>Create a new quiz by filling out the form below:</h4>
 		<form action="/quiz/new/" method="post">
 			{% csrf_token %}
 			{{ form.as_ul}}
