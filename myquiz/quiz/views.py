@@ -247,9 +247,10 @@ def quiz_submit(request, quiz_id):
 @login_required
 def review(request):
     try:
-        quizzes = Quiz_attempt.objects.filter(taker=request.user.id)
+        quizzes = Quiz_Attempt.objects.filter(taker=request.user.id)
+        return render(request, 'quiz/review.html', context={'quizzes': quizzes})
     except Quiz_Attempt.DoesNotExist:
-        
+        return HttpResponseRedirect('/take_quiz')
 
 
 def score(attempt):
