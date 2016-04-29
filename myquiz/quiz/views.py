@@ -2,7 +2,7 @@ from django.shortcuts import render
 import datetime
 from django.http import HttpResponse, HttpResponseRedirect,  Http404
 from django .template import loader
-from django .shortcuts import render
+from django .shortcuts import render, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -11,6 +11,7 @@ from models import Quiz, Question, Answer, Quiz_Attempt, Question_Attempt, Answe
 
 
 def index(request):
+    """Returns the home page with quizzes avaialble"""
     quizzes = Quiz.objects.all()
     template = loader.get_template('quiz/index.html')
     context = {
@@ -21,8 +22,10 @@ def index(request):
 
 @user_passes_test(lambda u: u.is_superuser)
 def make_quiz(request):
+    """Shows all current quizes and lets users make new ones"""
     quizzes = Quiz.objects.all()
     if request.method == "POST":
+        # copies form data to a new dictionary and adds the user as author
         data = request.POST
         data_copy = dict()
         for key, value in data.iteritems():
@@ -34,15 +37,15 @@ def make_quiz(request):
             return HttpResponseRedirect('/quiz/new')
     else:
         form = QuizForm()
-    return render(request, 'quiz/make_quiz.html', context={'form':form, 'quizzes':quizzes})
+    return render(request, 'quiz/make_quiz.html', context={'form': form, 'quizzes': quizzes})
+
 
 @user_passes_test(lambda u: u.is_superuser)
 def write_question(request, quiz_id):
-    try:
-        quiz = Quiz.objects.get(pk=quiz_id)
-    except Quiz.DoesNotExist:
-            raise Http404("Quiz does not exist")
-    if request.method=="POST":
+    """Shows all questions for a quiz and lets user create a new one"""
+    quiz = get_object_or_404(Quiz, pk=quiz_id)
+    if request.method == "POST":
+        # copies the form data to a new dictionary and adds the quiz id
         data = request.POST
         mydata = dict()
         for key, value in data.iteritems():
@@ -55,16 +58,16 @@ def write_question(request, quiz_id):
     else:
         questions = Question.objects.all().filter(quiz=quiz_id)
         form = QuestionForm()
-    return render(request, 'quiz/write_question.html', {'quiz': quiz, 'form': form, 'questions' : questions})
+    return render(request, 'quiz/write_question.html', {'quiz': quiz, 'form': form, 'questions': questions})
+
 
 @user_passes_test(lambda u: u.is_superuser)
 def write_answer(request, question_id):
+    """Shows all answers for a question and allows user to create a new one"""
     answers = Answer.objects.all().filter(question=question_id)
-    try:
-        question = Question.objects.get(pk=question_id)
-    except Quiz.DoesNotExist:
-            raise Http404("Question does not exist")
+    question = get_object_or_404(Question, pk=question_id)
     if request.method == "POST":
+        # copies the form data to a new dictionary and adds the question id
         data = request.POST
         mydata = dict()
         for key, value in data.iteritems():
@@ -80,6 +83,7 @@ def write_answer(request, question_id):
 
 
 def create_user(request):
+    """Creates a new user"""
     if request.method == "POST":
         form = UserCreateForm(request.POST)
         if form.is_valid():
@@ -87,10 +91,11 @@ def create_user(request):
             return HttpResponseRedirect('/')
     else:
         form = UserCreateForm()
-    return render(request, 'quiz/create_user.html', context={'form':form})
+    return render(request, 'quiz/create_user.html', context={'form': form})
 
 
 def log_in(request):
+    """authenticates the user and begins session"""
     if request.method == "POST":
         username = request.POST['username']
         password = request.POST['password']
@@ -100,22 +105,22 @@ def log_in(request):
                 login(request, user)
                 return HttpResponseRedirect('/')
             else:
-                # account is disabled
                 return HttpResponseRedirect('/account_disabled')
         else:
-            # invalid logint
             return HttpResponseRedirect('/invalid_login')
     else:
         return render(request, 'quiz/log_in.html')
 
 
 def log_out(request):
+    """ends session for a user"""
     logout(request)
     return HttpResponseRedirect('/')
 
 
 @login_required
 def take_quiz(request):
+    """Shows all quizes a user can take"""
     quizzes = Quiz.objects.all()
     new_quizzes = []
     in_progress_quizzes = []
@@ -131,28 +136,22 @@ def take_quiz(request):
 
 @login_required
 def confirm_quiz(request, quiz_id):
-    try:
-        quiz = Quiz.objects.get(pk=quiz_id)
-    except Quiz.DoesNotExist:
-        raise Http404("Quiz does not exist")
-
+    """Shows the description of the quiz"""
+    quiz = get_object_or_404(Quiz, pk=quiz_id)
     try:
         attempt = Quiz_Attempt.objects.get(taker=request.user.id, test=quiz_id)
         if attempt.submitted:
-            return HttpResponseRedirect('already taken this quiz')
+            return HttpResponseRedirect('/take_quiz')
         else:
             return HttpResponseRedirect('/take/{{quiz.id}}')
     except Quiz_Attempt.DoesNotExist:
         return render(request, 'quiz/test_confirm.html', context={'quiz': quiz})
-        # make new quiz attempt for them. We sould expect this
 
 
 @login_required
 def begin_quiz(request, quiz_id):
-    try:
-        quiz = Quiz.objects.get(pk=quiz_id)
-    except Quiz.DoesNotExist:
-        raise Http404("Quiz does not exist")
+    """Checks that a quiz attempt exists or creates a new one"""
+    quiz = get_object_or_404(Quiz, pk=quiz_id)
     questions = Question.objects.filter(quiz=quiz_id).order_by('id')
     question = questions[0]
     try:
@@ -163,19 +162,25 @@ def begin_quiz(request, quiz_id):
         if form.is_valid():
             form.save()
             attempt = Quiz_Attempt.objects.get(taker=request.user.id, test=quiz_id)
-        # make new quiz attempt for them. We sould expect this
     if attempt.submitted:
-        return HttpResponseRedirect('already taken this quiz')
+        return HttpResponseRedirect('/take_quiz')
     else:
         return render(request, 'quiz/instructions.html', context={'quiz': quiz, 'question': question})
 
 
 @login_required
 def answer_question(request, quiz_id, question_id):
-    quiz = Quiz.objects.get(pk=quiz_id)
-    question = Question.objects.get(pk=question_id)
+    """lets user create answer attempts for questions
+
+    Checks that a quiz and question attempt exist or creates a new one
+    Creates an answer attempt if one does not exist
+    Deletes an answer attempt if one does exist
+    """
+    quiz = get_object_or_404(Quiz, pk=quiz_id)
+    question = get_object_or_404(Question, pk=question_id, quiz=quiz_id)
     questions = list(Question.objects.filter(quiz=quiz_id).order_by('id'))
     index = questions.index(question)
+    # Gets the previous and next question
     try:
         next_q = questions[index+1].id
     except IndexError:
@@ -185,16 +190,18 @@ def answer_question(request, quiz_id, question_id):
     else:
         prev_q = questions[index-1].id
 
-    quiz_attempt = Quiz_Attempt.objects.get(taker=request.user.id, test=quiz_id)
+    quiz_attempt = get_object_or_404(Quiz_Attempt, taker=request.user.id, test=quiz_id)
+    # looks for a question attempt and makes one if one doesn't already exist
     if quiz_attempt.submitted:
-        return HttpResponseRedirect('already taken this quiz')
+        return HttpResponseRedirect('/take_quiz')
     else:
         try:
             question_attempt = Question_Attempt.objects.get(quiz=quiz_attempt, question=question)
         except Question_Attempt.DoesNotExist:
             question_attempt = Question_Attempt(quiz=quiz_attempt, question=question)
             question_attempt.save()
-
+    # Uses the form data to look for an existing answer attempt. Deletes it if
+    # it finds one, and saves the form if one does not exist
     if request.method == "POST":
         try:
             post_question = request.POST['question']
@@ -208,6 +215,7 @@ def answer_question(request, quiz_id, question_id):
 
     answers = Answer.objects.filter(question=question_id)
     forms = []
+    # creates forms for each answer, and records if an answer attempt exists
     for answer in answers:
         try:
             answer_attempt = Answer_Attempt.objects.get(question=question_attempt.id, answer=answer.id)
@@ -220,6 +228,7 @@ def answer_question(request, quiz_id, question_id):
 
 @login_required
 def quiz_submit(request, quiz_id):
+    """Updates the quiz_attempt with a score and endtime"""
     if request.method == "POST":
         attempt = Quiz_Attempt.objects.get(taker=request.user.id, test=quiz_id)
         attempt.end = datetime.datetime.now()
@@ -233,6 +242,7 @@ def quiz_submit(request, quiz_id):
 
 @login_required
 def review(request):
+    """shows all taken quizes and the scores"""
     try:
         quizzes = Quiz_Attempt.objects.filter(taker=request.user.id)
         return render(request, 'quiz/review.html', context={'quizzes': quizzes})
@@ -241,6 +251,7 @@ def review(request):
 
 
 def score(attempt):
+    """Returns the score for a quiz attempt"""
     score = 0
     question_attempts = Question_Attempt.objects.filter(quiz=attempt.id)
     for q in question_attempts:
