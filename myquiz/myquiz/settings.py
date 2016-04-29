@@ -80,8 +80,12 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'jhaas_quiz',
-	'USER': 'jhaas',
-	'PASSWORD' : password,
+        'USER': 'jhaas',
+        'PASSWORD': password,
+        'TEST': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': 'test_db'
+        }
     }
 }
 
@@ -99,7 +103,7 @@ USE_L10N = True
 
 USE_TZ = True
 
-LOGIN_URL='/log_in'
+LOGIN_URL = '/log_in'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
