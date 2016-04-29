@@ -76,16 +76,20 @@ WSGI_APPLICATION = 'myquiz.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
+### for running the test suite, switch the database to the following configuration
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': 'test_db'
+#     }
+# }
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'jhaas_quiz',
         'USER': 'jhaas',
         'PASSWORD': password,
-        'TEST': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': 'test_db'
-        }
     }
 }
 
