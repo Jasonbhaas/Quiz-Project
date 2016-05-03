@@ -39,7 +39,7 @@ class Answer(models.Model):
 class Quiz_Attempt(models.Model):
     taker = models.ForeignKey(User)
     test = models.ForeignKey(Quiz)
-    score = models.IntegerField(null=True)
+    score = models.FloatField(null=True)
     start = models.DateTimeField(auto_now=True)
     end = models.DateTimeField(null=True)
     submitted = models.BooleanField(default=False)
