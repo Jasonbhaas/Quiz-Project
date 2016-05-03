@@ -259,5 +259,5 @@ def score(attempt):
         answers = Answer_Attempt.objects.filter(question=q)
         for a in answers:
             tally[a.answer.point_value-1] += 1
-        score += (0**tally[0])*(.5**tally[1])*tally[2]
+        score += (0**tally[0])/(2.0**tally[1])*tally[2]
     return score
